@@ -29,8 +29,11 @@ export default function Landing() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!url.trim()) {
-      setError("Please enter a GitHub repository URL");
+    const trimmed = url.trim();
+    const isFullUrl = /github\.com\/[^/\s]+\/[^/\s]+/.test(trimmed);
+    const isShortFormat = /^[^/\s]+\/[^/\s]+$/.test(trimmed);
+    if (!trimmed || (!isFullUrl && !isShortFormat)) {
+      setError("Please enter a valid GitHub repo URL or owner/repo format.");
       return;
     }
     setError("");

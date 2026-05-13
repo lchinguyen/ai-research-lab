@@ -1,11 +1,13 @@
 import type { Repository, AgentOutput, ArchitectureMap, Issue, PrSummary } from "@workspace/api-zod";
 
 function parseGitHubUrl(url: string): { owner: string; name: string } {
-  try {
-    const clean = url.replace(/\.git$/, "").replace(/\/$/, "");
-    const match = clean.match(/github\.com\/([^/]+)\/([^/]+)/);
-    if (match) return { owner: match[1], name: match[2] };
-  } catch {}
+  const clean = url.trim().replace(/\.git$/, "").replace(/\/$/, "");
+  // Full URL: https://github.com/owner/repo
+  const fullMatch = clean.match(/github\.com\/([^/]+)\/([^/]+)/);
+  if (fullMatch) return { owner: fullMatch[1], name: fullMatch[2] };
+  // Short format: owner/repo
+  const shortMatch = clean.match(/^([^/\s]+)\/([^/\s]+)$/);
+  if (shortMatch) return { owner: shortMatch[1], name: shortMatch[2] };
   return { owner: "unknown", name: "repository" };
 }
 
