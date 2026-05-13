@@ -9,8 +9,8 @@ import {
   buildMockPrSummary,
   repoId as makeRepoId,
 } from "./mock-data";
-import { fetchFromGitHub } from "./github";
-import { analyzeWithOpenAI } from "./openai-analysis";
+import { fetchFromGitHub, type LanguageStat, type ContributorInfo, type ReleaseInfo, type CommitInfo } from "./github";
+import { runHeuristicAnalysis } from "./heuristic-analysis";
 import {
   buildHealthScore,
   buildDependencyRisk,
@@ -28,6 +28,16 @@ interface StoreEntry {
   issues: Issue[];
   prSummary: PrSummary;
   treePaths: string[];
+  languages: LanguageStat[];
+  contributors: ContributorInfo[];
+  releases: ReleaseInfo[];
+  recentCommits: CommitInfo[];
+  topics: string[];
+  openIssuesCount: number;
+  watchersCount: number;
+  size: number;
+  license: string;
+  createdAt: string;
 }
 
 const store = new Map<string, StoreEntry>();
@@ -54,83 +64,78 @@ router.post("/repositories/analyze", async (req, res) => {
 
   const mockRepo = buildMockRepository(url);
   const mockArch = buildMockArchitecture(mockRepo.name);
-  const mockAgents = buildMockAgents(mockRepo.name);
-  const mockIssues = buildMockIssues(mockRepo.name);
-  const mockPrSummary = buildMockPrSummary(mockRepo.name);
 
-  const ghResult = await fetchFromGitHub(url, mockRepo, mockArch);
+  const gh = await fetchFromGitHub(url, mockRepo, mockArch);
 
-  const topLevelPaths = ghResult.treeItems
-    .filter((i) => !i.path.includes("/"))
-    .map((i) => i.path);
+  const treePaths = gh.treeItems.map((i) => i.path);
 
-  const aiAnalysis = await analyzeWithOpenAI(
-    {
-      name: ghResult.repo.name,
-      owner: ghResult.repo.owner,
-      description: ghResult.repo.purpose,
-      language: ghResult.repo.language,
-      framework: ghResult.repo.framework,
-      stars: ghResult.repo.stars,
-      forks: ghResult.repo.forks,
-      readmeText: ghResult.readmeText,
-      keyFiles: ghResult.keyFiles,
-      topLevelPaths,
-    },
-    {
-      agents: mockAgents,
-      issues: mockIssues,
-      prSummary: mockPrSummary,
-      maintainabilityScore: mockRepo.maintainabilityScore,
-      complexityScore: mockRepo.complexityScore,
-    }
-  );
-
-  const finalRepo: Repository = {
-    ...ghResult.repo,
-    purpose: aiAnalysis.purpose,
-    architectureSummary: aiAnalysis.architectureSummary,
-    maintainabilityScore: aiAnalysis.maintainabilityScore,
-    complexityScore: aiAnalysis.complexityScore,
-  };
+  // Build heuristic analysis from real GitHub data
+  const analysis = runHeuristicAnalysis({
+    name: gh.repo.name,
+    owner: gh.repo.owner,
+    language: gh.repo.language,
+    framework: gh.repo.framework,
+    stars: gh.repo.stars,
+    forks: gh.repo.forks,
+    treePaths,
+    keyFiles: gh.keyFiles,
+    languages: gh.languages,
+    contributors: gh.contributors,
+    releases: gh.releases,
+    recentCommits: gh.recentCommits,
+    topics: gh.topics,
+    openIssuesCount: gh.openIssuesCount,
+    watchersCount: gh.watchersCount,
+    size: gh.size,
+    license: gh.license,
+    maintainabilityScore: gh.repo.maintainabilityScore,
+    complexityScore: gh.repo.complexityScore,
+    purpose: gh.repo.purpose,
+    architectureSummary: gh.repo.architectureSummary,
+  });
 
   const finalArch: ArchitectureMap = {
-    ...ghResult.architecture,
-    componentRelationships: ghResult.architecture.componentRelationships.length > 0
-      ? ghResult.architecture.componentRelationships
+    ...gh.architecture,
+    componentRelationships: gh.architecture.componentRelationships.length > 0
+      ? gh.architecture.componentRelationships
       : mockArch.componentRelationships,
-    dataFlow: ghResult.architecture.dataFlow.length > 0
-      ? ghResult.architecture.dataFlow
+    dataFlow: gh.architecture.dataFlow.length > 0
+      ? gh.architecture.dataFlow
       : mockArch.dataFlow,
-    dependencies: ghResult.architecture.dependencies.length > 0
-      ? ghResult.architecture.dependencies
+    dependencies: gh.architecture.dependencies.length > 0
+      ? gh.architecture.dependencies
       : mockArch.dependencies,
   };
 
-  const treePaths = ghResult.treeItems.map((i) => i.path);
-
   store.set(id, {
-    repo: finalRepo,
+    repo: gh.repo,
     architecture: finalArch,
-    agents: aiAnalysis.agents,
-    issues: aiAnalysis.issues,
-    prSummary: aiAnalysis.prSummary,
+    agents: analysis.agents,
+    issues: analysis.issues,
+    prSummary: analysis.prSummary,
     treePaths,
+    languages: gh.languages,
+    contributors: gh.contributors,
+    releases: gh.releases,
+    recentCommits: gh.recentCommits,
+    topics: gh.topics,
+    openIssuesCount: gh.openIssuesCount,
+    watchersCount: gh.watchersCount,
+    size: gh.size,
+    license: gh.license,
+    createdAt: gh.createdAt,
   });
 
-  res.json(finalRepo);
+  res.json(gh.repo);
 });
 
 // GET /api/repositories/:repoId
 router.get("/repositories/:repoId", (req, res) => {
   const entry = getStored(req.params.repoId);
-  if (!entry) {
-    const mockRepo = getRepoById(req.params.repoId);
-    if (mockRepo) { res.json(mockRepo); return; }
-    res.status(404).json({ error: "Repository not found" });
-    return;
-  }
-  res.json(entry.repo);
+  if (entry) { res.json(entry.repo); return; }
+  const mockRepo = getRepoById(req.params.repoId);
+  if (mockRepo) { res.json(mockRepo); return; }
+  res.status(404).json({ error: "Repository not found" });
 });
 
 // GET /api/repositories/:repoId/agents
@@ -180,6 +185,25 @@ router.get("/repositories/:repoId/pr-summary", (req, res) => {
   const name = getRepoById(req.params.repoId)?.name;
   if (!name) { res.status(404).json({ error: "Repository not found" }); return; }
   res.json(buildMockPrSummary(name));
+});
+
+// GET /api/repositories/:repoId/stats
+router.get("/repositories/:repoId/stats", (req, res) => {
+  const entry = getStored(req.params.repoId);
+  if (!entry) { res.status(404).json({ error: "Repository not found" }); return; }
+  res.json({
+    languages: entry.languages,
+    contributors: entry.contributors,
+    releases: entry.releases,
+    recentCommits: entry.recentCommits,
+    topics: entry.topics,
+    openIssuesCount: entry.openIssuesCount,
+    watchersCount: entry.watchersCount,
+    size: entry.size,
+    defaultBranch: "main",
+    license: entry.license,
+    createdAt: entry.createdAt,
+  });
 });
 
 // GET /api/repositories/:repoId/health-score
