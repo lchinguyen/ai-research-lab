@@ -18,9 +18,14 @@ import type {
 
 import type {
   AgentOutput,
+  ArchViz,
   ArchitectureMap,
+  DependencyRisk,
+  EngineeringTimeline,
+  HealthScore,
   HealthStatus,
   Issue,
+  OnboardingGuide,
   PrSummary,
   Repository,
   RepositoryInput,
@@ -750,6 +755,442 @@ export function useGetPrSummary<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetPrSummaryQueryOptions(repoId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get repository health scores across 6 dimensions
+ */
+export const getGetHealthScoreUrl = (repoId: string) => {
+  return `/api/repositories/${repoId}/health-score`;
+};
+
+export const getHealthScore = async (
+  repoId: string,
+  options?: RequestInit,
+): Promise<HealthScore> => {
+  return customFetch<HealthScore>(getGetHealthScoreUrl(repoId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetHealthScoreQueryKey = (repoId: string) => {
+  return [`/api/repositories/${repoId}/health-score`] as const;
+};
+
+export const getGetHealthScoreQueryOptions = <
+  TData = Awaited<ReturnType<typeof getHealthScore>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getHealthScore>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetHealthScoreQueryKey(repoId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getHealthScore>>> = ({
+    signal,
+  }) => getHealthScore(repoId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!repoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getHealthScore>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetHealthScoreQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getHealthScore>>
+>;
+export type GetHealthScoreQueryError = ErrorType<void>;
+
+/**
+ * @summary Get repository health scores across 6 dimensions
+ */
+
+export function useGetHealthScore<
+  TData = Awaited<ReturnType<typeof getHealthScore>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getHealthScore>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetHealthScoreQueryOptions(repoId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Analyze dependency risk for a repository
+ */
+export const getGetDependencyRiskUrl = (repoId: string) => {
+  return `/api/repositories/${repoId}/dependency-risk`;
+};
+
+export const getDependencyRisk = async (
+  repoId: string,
+  options?: RequestInit,
+): Promise<DependencyRisk> => {
+  return customFetch<DependencyRisk>(getGetDependencyRiskUrl(repoId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetDependencyRiskQueryKey = (repoId: string) => {
+  return [`/api/repositories/${repoId}/dependency-risk`] as const;
+};
+
+export const getGetDependencyRiskQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDependencyRisk>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getDependencyRisk>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetDependencyRiskQueryKey(repoId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getDependencyRisk>>
+  > = ({ signal }) => getDependencyRisk(repoId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!repoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getDependencyRisk>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetDependencyRiskQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDependencyRisk>>
+>;
+export type GetDependencyRiskQueryError = ErrorType<void>;
+
+/**
+ * @summary Analyze dependency risk for a repository
+ */
+
+export function useGetDependencyRisk<
+  TData = Awaited<ReturnType<typeof getDependencyRisk>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getDependencyRisk>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetDependencyRiskQueryOptions(repoId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get engineering timeline roadmap for a repository
+ */
+export const getGetTimelineUrl = (repoId: string) => {
+  return `/api/repositories/${repoId}/timeline`;
+};
+
+export const getTimeline = async (
+  repoId: string,
+  options?: RequestInit,
+): Promise<EngineeringTimeline> => {
+  return customFetch<EngineeringTimeline>(getGetTimelineUrl(repoId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetTimelineQueryKey = (repoId: string) => {
+  return [`/api/repositories/${repoId}/timeline`] as const;
+};
+
+export const getGetTimelineQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTimeline>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getTimeline>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetTimelineQueryKey(repoId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTimeline>>> = ({
+    signal,
+  }) => getTimeline(repoId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!repoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTimeline>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetTimelineQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTimeline>>
+>;
+export type GetTimelineQueryError = ErrorType<void>;
+
+/**
+ * @summary Get engineering timeline roadmap for a repository
+ */
+
+export function useGetTimeline<
+  TData = Awaited<ReturnType<typeof getTimeline>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getTimeline>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTimelineQueryOptions(repoId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get architecture visualization data
+ */
+export const getGetArchVizUrl = (repoId: string) => {
+  return `/api/repositories/${repoId}/arch-viz`;
+};
+
+export const getArchViz = async (
+  repoId: string,
+  options?: RequestInit,
+): Promise<ArchViz> => {
+  return customFetch<ArchViz>(getGetArchVizUrl(repoId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetArchVizQueryKey = (repoId: string) => {
+  return [`/api/repositories/${repoId}/arch-viz`] as const;
+};
+
+export const getGetArchVizQueryOptions = <
+  TData = Awaited<ReturnType<typeof getArchViz>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getArchViz>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetArchVizQueryKey(repoId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getArchViz>>> = ({
+    signal,
+  }) => getArchViz(repoId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!repoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getArchViz>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetArchVizQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getArchViz>>
+>;
+export type GetArchVizQueryError = ErrorType<void>;
+
+/**
+ * @summary Get architecture visualization data
+ */
+
+export function useGetArchViz<
+  TData = Awaited<ReturnType<typeof getArchViz>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getArchViz>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetArchVizQueryOptions(repoId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get contributor onboarding guide
+ */
+export const getGetOnboardingUrl = (repoId: string) => {
+  return `/api/repositories/${repoId}/onboarding`;
+};
+
+export const getOnboarding = async (
+  repoId: string,
+  options?: RequestInit,
+): Promise<OnboardingGuide> => {
+  return customFetch<OnboardingGuide>(getGetOnboardingUrl(repoId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetOnboardingQueryKey = (repoId: string) => {
+  return [`/api/repositories/${repoId}/onboarding`] as const;
+};
+
+export const getGetOnboardingQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOnboarding>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getOnboarding>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetOnboardingQueryKey(repoId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getOnboarding>>> = ({
+    signal,
+  }) => getOnboarding(repoId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!repoId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getOnboarding>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetOnboardingQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOnboarding>>
+>;
+export type GetOnboardingQueryError = ErrorType<void>;
+
+/**
+ * @summary Get contributor onboarding guide
+ */
+
+export function useGetOnboarding<
+  TData = Awaited<ReturnType<typeof getOnboarding>>,
+  TError = ErrorType<void>,
+>(
+  repoId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getOnboarding>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetOnboardingQueryOptions(repoId, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

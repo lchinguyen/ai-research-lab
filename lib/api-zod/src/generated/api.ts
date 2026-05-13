@@ -183,3 +183,143 @@ export const GetPrSummaryResponse = zod.object({
   testingChecklist: zod.array(zod.string()),
   riskNotes: zod.array(zod.string()),
 });
+
+/**
+ * @summary Get repository health scores across 6 dimensions
+ */
+export const GetHealthScoreParams = zod.object({
+  repoId: zod.coerce.string(),
+});
+
+export const GetHealthScoreResponse = zod.object({
+  overallScore: zod.number(),
+  grade: zod.string(),
+  dimensions: zod.array(
+    zod.object({
+      id: zod.string(),
+      label: zod.string(),
+      score: zod.number(),
+      description: zod.string(),
+      insight: zod.string(),
+    }),
+  ),
+  summary: zod.string(),
+});
+
+/**
+ * @summary Analyze dependency risk for a repository
+ */
+export const GetDependencyRiskParams = zod.object({
+  repoId: zod.coerce.string(),
+});
+
+export const GetDependencyRiskResponse = zod.object({
+  totalCount: zod.number(),
+  majorFrameworks: zod.array(zod.string()),
+  estimatedOutdated: zod.number(),
+  overallRisk: zod.enum(["low", "medium", "high", "critical"]),
+  bundleComplexity: zod.string(),
+  warnings: zod.array(zod.string()),
+  recommendations: zod.array(zod.string()),
+  items: zod.array(
+    zod.object({
+      name: zod.string(),
+      category: zod.string(),
+      riskLevel: zod.enum(["low", "medium", "high", "critical"]),
+      reason: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary Get engineering timeline roadmap for a repository
+ */
+export const GetTimelineParams = zod.object({
+  repoId: zod.coerce.string(),
+});
+
+export const GetTimelineResponse = zod.object({
+  phases: zod.array(
+    zod.object({
+      phase: zod.string(),
+      phaseNumber: zod.number(),
+      weeks: zod.number(),
+      milestone: zod.string(),
+      tasks: zod.array(zod.string()),
+      status: zod.enum(["complete", "in-progress", "upcoming"]),
+    }),
+  ),
+  totalWeeks: zod.number(),
+  deploymentReadiness: zod.string(),
+  projectType: zod.string(),
+  summary: zod.string(),
+});
+
+/**
+ * @summary Get architecture visualization data
+ */
+export const GetArchVizParams = zod.object({
+  repoId: zod.coerce.string(),
+});
+
+export const GetArchVizResponse = zod.object({
+  nodes: zod.array(
+    zod.object({
+      id: zod.string(),
+      label: zod.string(),
+      layer: zod.enum([
+        "frontend",
+        "backend",
+        "api",
+        "services",
+        "database",
+        "config",
+        "testing",
+        "shared",
+      ]),
+      type: zod.string(),
+      description: zod.string().optional(),
+      files: zod.array(zod.string()).optional(),
+    }),
+  ),
+  connections: zod.array(
+    zod.object({
+      from: zod.string(),
+      to: zod.string(),
+      label: zod.string(),
+    }),
+  ),
+  projectType: zod.string(),
+  layers: zod.array(zod.string()),
+});
+
+/**
+ * @summary Get contributor onboarding guide
+ */
+export const GetOnboardingParams = zod.object({
+  repoId: zod.coerce.string(),
+});
+
+export const GetOnboardingResponse = zod.object({
+  setupSteps: zod.array(
+    zod.object({
+      step: zod.number(),
+      title: zod.string(),
+      command: zod.string(),
+      description: zod.string(),
+    }),
+  ),
+  firstFilesToRead: zod.array(zod.string()),
+  beginnerIssues: zod.array(
+    zod.object({
+      title: zod.string(),
+      difficulty: zod.enum(["beginner", "intermediate"]),
+      area: zod.string(),
+      description: zod.string(),
+    }),
+  ),
+  architectureOverview: zod.string(),
+  localDevSteps: zod.array(zod.string()),
+  packageManager: zod.string(),
+  estimatedSetupMinutes: zod.number(),
+});

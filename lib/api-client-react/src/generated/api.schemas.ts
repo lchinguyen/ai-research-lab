@@ -130,3 +130,150 @@ export interface PrSummary {
   testingChecklist: string[];
   riskNotes: string[];
 }
+
+export interface HealthDimension {
+  id: string;
+  label: string;
+  score: number;
+  description: string;
+  insight: string;
+}
+
+export interface HealthScore {
+  overallScore: number;
+  grade: string;
+  dimensions: HealthDimension[];
+  summary: string;
+}
+
+export type DependencyItemRiskLevel =
+  (typeof DependencyItemRiskLevel)[keyof typeof DependencyItemRiskLevel];
+
+export const DependencyItemRiskLevel = {
+  low: "low",
+  medium: "medium",
+  high: "high",
+  critical: "critical",
+} as const;
+
+export interface DependencyItem {
+  name: string;
+  category: string;
+  riskLevel: DependencyItemRiskLevel;
+  reason: string;
+}
+
+export type DependencyRiskOverallRisk =
+  (typeof DependencyRiskOverallRisk)[keyof typeof DependencyRiskOverallRisk];
+
+export const DependencyRiskOverallRisk = {
+  low: "low",
+  medium: "medium",
+  high: "high",
+  critical: "critical",
+} as const;
+
+export interface DependencyRisk {
+  totalCount: number;
+  majorFrameworks: string[];
+  estimatedOutdated: number;
+  overallRisk: DependencyRiskOverallRisk;
+  bundleComplexity: string;
+  warnings: string[];
+  recommendations: string[];
+  items: DependencyItem[];
+}
+
+export type TimelinePhaseStatus =
+  (typeof TimelinePhaseStatus)[keyof typeof TimelinePhaseStatus];
+
+export const TimelinePhaseStatus = {
+  complete: "complete",
+  "in-progress": "in-progress",
+  upcoming: "upcoming",
+} as const;
+
+export interface TimelinePhase {
+  phase: string;
+  phaseNumber: number;
+  weeks: number;
+  milestone: string;
+  tasks: string[];
+  status: TimelinePhaseStatus;
+}
+
+export interface EngineeringTimeline {
+  phases: TimelinePhase[];
+  totalWeeks: number;
+  deploymentReadiness: string;
+  projectType: string;
+  summary: string;
+}
+
+export type ArchVizNodeLayer =
+  (typeof ArchVizNodeLayer)[keyof typeof ArchVizNodeLayer];
+
+export const ArchVizNodeLayer = {
+  frontend: "frontend",
+  backend: "backend",
+  api: "api",
+  services: "services",
+  database: "database",
+  config: "config",
+  testing: "testing",
+  shared: "shared",
+} as const;
+
+export interface ArchVizNode {
+  id: string;
+  label: string;
+  layer: ArchVizNodeLayer;
+  type: string;
+  description?: string;
+  files?: string[];
+}
+
+export interface ArchVizConnection {
+  from: string;
+  to: string;
+  label: string;
+}
+
+export interface ArchViz {
+  nodes: ArchVizNode[];
+  connections: ArchVizConnection[];
+  projectType: string;
+  layers: string[];
+}
+
+export interface OnboardingStep {
+  step: number;
+  title: string;
+  command: string;
+  description: string;
+}
+
+export type BeginnerIssueDifficulty =
+  (typeof BeginnerIssueDifficulty)[keyof typeof BeginnerIssueDifficulty];
+
+export const BeginnerIssueDifficulty = {
+  beginner: "beginner",
+  intermediate: "intermediate",
+} as const;
+
+export interface BeginnerIssue {
+  title: string;
+  difficulty: BeginnerIssueDifficulty;
+  area: string;
+  description: string;
+}
+
+export interface OnboardingGuide {
+  setupSteps: OnboardingStep[];
+  firstFilesToRead: string[];
+  beginnerIssues: BeginnerIssue[];
+  architectureOverview: string;
+  localDevSteps: string[];
+  packageManager: string;
+  estimatedSetupMinutes: number;
+}

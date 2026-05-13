@@ -11,6 +11,13 @@ import {
 } from "./mock-data";
 import { fetchFromGitHub } from "./github";
 import { analyzeWithOpenAI } from "./openai-analysis";
+import {
+  buildHealthScore,
+  buildDependencyRisk,
+  buildTimeline,
+  buildArchViz,
+  buildOnboarding,
+} from "./enhancements";
 
 const router = Router();
 
@@ -20,13 +27,17 @@ interface StoreEntry {
   agents: AgentOutput[];
   issues: Issue[];
   prSummary: PrSummary;
+  treePaths: string[];
 }
 
-// In-memory store: repoId → full analysis result
 const store = new Map<string, StoreEntry>();
 
 function getStored(id: string): StoreEntry | null {
   return store.get(id) ?? null;
+}
+
+function makeCtx(entry: StoreEntry) {
+  return { repo: entry.repo, architecture: entry.architecture, treePaths: entry.treePaths };
 }
 
 // POST /api/repositories/analyze
@@ -38,25 +49,21 @@ router.post("/repositories/analyze", async (req, res) => {
   }
 
   const id = makeRepoId(url);
-
-  // Return cached result if already analyzed
   const cached = getStored(id);
-  if (cached) {
-    res.json(cached.repo);
-    return;
-  }
+  if (cached) { res.json(cached.repo); return; }
 
-  // 1. Build mock fallbacks (always safe, synchronous)
   const mockRepo = buildMockRepository(url);
   const mockArch = buildMockArchitecture(mockRepo.name);
   const mockAgents = buildMockAgents(mockRepo.name);
   const mockIssues = buildMockIssues(mockRepo.name);
   const mockPrSummary = buildMockPrSummary(mockRepo.name);
 
-  // 2. Fetch real GitHub data
   const ghResult = await fetchFromGitHub(url, mockRepo, mockArch);
 
-  // 3. Run AI analysis using real GitHub context
+  const topLevelPaths = ghResult.treeItems
+    .filter((i) => !i.path.includes("/"))
+    .map((i) => i.path);
+
   const aiAnalysis = await analyzeWithOpenAI(
     {
       name: ghResult.repo.name,
@@ -68,9 +75,7 @@ router.post("/repositories/analyze", async (req, res) => {
       forks: ghResult.repo.forks,
       readmeText: ghResult.readmeText,
       keyFiles: ghResult.keyFiles,
-      topLevelPaths: ghResult.treeItems
-        .filter((i) => !i.path.includes("/"))
-        .map((i) => i.path),
+      topLevelPaths,
     },
     {
       agents: mockAgents,
@@ -81,7 +86,6 @@ router.post("/repositories/analyze", async (req, res) => {
     }
   );
 
-  // 4. Merge AI outputs into the final repo object
   const finalRepo: Repository = {
     ...ghResult.repo,
     purpose: aiAnalysis.purpose,
@@ -90,29 +94,28 @@ router.post("/repositories/analyze", async (req, res) => {
     complexityScore: aiAnalysis.complexityScore,
   };
 
-  // 5. Merge AI architecture insights (keep real file tree + AI component data)
   const finalArch: ArchitectureMap = {
     ...ghResult.architecture,
-    componentRelationships:
-      ghResult.architecture.componentRelationships.length > 0
-        ? ghResult.architecture.componentRelationships
-        : mockArch.componentRelationships,
-    dataFlow:
-      ghResult.architecture.dataFlow.length > 0
-        ? ghResult.architecture.dataFlow
-        : mockArch.dataFlow,
+    componentRelationships: ghResult.architecture.componentRelationships.length > 0
+      ? ghResult.architecture.componentRelationships
+      : mockArch.componentRelationships,
+    dataFlow: ghResult.architecture.dataFlow.length > 0
+      ? ghResult.architecture.dataFlow
+      : mockArch.dataFlow,
     dependencies: ghResult.architecture.dependencies.length > 0
       ? ghResult.architecture.dependencies
       : mockArch.dependencies,
   };
 
-  // 6. Store everything
+  const treePaths = ghResult.treeItems.map((i) => i.path);
+
   store.set(id, {
     repo: finalRepo,
     architecture: finalArch,
     agents: aiAnalysis.agents,
     issues: aiAnalysis.issues,
     prSummary: aiAnalysis.prSummary,
+    treePaths,
   });
 
   res.json(finalRepo);
@@ -177,6 +180,41 @@ router.get("/repositories/:repoId/pr-summary", (req, res) => {
   const name = getRepoById(req.params.repoId)?.name;
   if (!name) { res.status(404).json({ error: "Repository not found" }); return; }
   res.json(buildMockPrSummary(name));
+});
+
+// GET /api/repositories/:repoId/health-score
+router.get("/repositories/:repoId/health-score", (req, res) => {
+  const entry = getStored(req.params.repoId);
+  if (!entry) { res.status(404).json({ error: "Repository not found" }); return; }
+  res.json(buildHealthScore(makeCtx(entry)));
+});
+
+// GET /api/repositories/:repoId/dependency-risk
+router.get("/repositories/:repoId/dependency-risk", (req, res) => {
+  const entry = getStored(req.params.repoId);
+  if (!entry) { res.status(404).json({ error: "Repository not found" }); return; }
+  res.json(buildDependencyRisk(makeCtx(entry)));
+});
+
+// GET /api/repositories/:repoId/timeline
+router.get("/repositories/:repoId/timeline", (req, res) => {
+  const entry = getStored(req.params.repoId);
+  if (!entry) { res.status(404).json({ error: "Repository not found" }); return; }
+  res.json(buildTimeline(makeCtx(entry)));
+});
+
+// GET /api/repositories/:repoId/arch-viz
+router.get("/repositories/:repoId/arch-viz", (req, res) => {
+  const entry = getStored(req.params.repoId);
+  if (!entry) { res.status(404).json({ error: "Repository not found" }); return; }
+  res.json(buildArchViz(makeCtx(entry)));
+});
+
+// GET /api/repositories/:repoId/onboarding
+router.get("/repositories/:repoId/onboarding", (req, res) => {
+  const entry = getStored(req.params.repoId);
+  if (!entry) { res.status(404).json({ error: "Repository not found" }); return; }
+  res.json(buildOnboarding(makeCtx(entry)));
 });
 
 export default router;

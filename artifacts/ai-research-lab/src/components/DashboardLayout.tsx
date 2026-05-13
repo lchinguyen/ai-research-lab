@@ -1,24 +1,38 @@
 import { Link, useParams, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import {
-  LayoutDashboard,
-  Bot,
-  GitBranch,
-  AlertCircle,
-  GitPullRequest,
-  ChevronLeft,
-  Github,
-  Cpu,
+  LayoutDashboard, Bot, GitBranch, AlertCircle, GitPullRequest,
+  ChevronLeft, Github, Cpu, Heart, ShieldAlert, CalendarDays, Network, UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetRepository } from "@workspace/api-client-react";
 
-const navItems = [
-  { label: "Overview", icon: LayoutDashboard, path: "" },
-  { label: "AI Agents", icon: Bot, path: "/agents" },
-  { label: "Architecture", icon: GitBranch, path: "/architecture" },
-  { label: "Issues", icon: AlertCircle, path: "/issues" },
-  { label: "PR Summary", icon: GitPullRequest, path: "/pr-summary" },
+const NAV_SECTIONS = [
+  {
+    label: "Analysis",
+    items: [
+      { label: "Overview", icon: LayoutDashboard, path: "" },
+      { label: "AI Agents", icon: Bot, path: "/agents" },
+      { label: "Architecture", icon: GitBranch, path: "/architecture" },
+      { label: "Issues", icon: AlertCircle, path: "/issues" },
+      { label: "PR Summary", icon: GitPullRequest, path: "/pr-summary" },
+    ],
+  },
+  {
+    label: "Insights",
+    items: [
+      { label: "Health Score", icon: Heart, path: "/health-score" },
+      { label: "Dependency Risk", icon: ShieldAlert, path: "/dependency-risk" },
+      { label: "Arch Visualization", icon: Network, path: "/arch-viz" },
+    ],
+  },
+  {
+    label: "Planning",
+    items: [
+      { label: "Timeline", icon: CalendarDays, path: "/timeline" },
+      { label: "Onboarding Guide", icon: UserCheck, path: "/onboarding" },
+    ],
+  },
 ];
 
 interface DashboardLayoutProps {
@@ -37,7 +51,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-60 flex flex-col border-r border-sidebar-border bg-sidebar flex-shrink-0">
+      <aside className="w-56 flex flex-col border-r border-sidebar-border bg-sidebar flex-shrink-0">
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-4 py-4 border-b border-sidebar-border">
           <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center flex-shrink-0">
@@ -60,27 +74,35 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         )}
 
         {/* Nav */}
-        <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-          {navItems.map((item) => {
-            const href = `/dashboard/${repoId}${item.path}`;
-            const isActive = location === href;
-            return (
-              <Link key={item.path} href={href}>
-                <div
-                  data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors",
-                    isActive
-                      ? "bg-primary/15 text-primary font-medium"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground"
-                  )}
-                >
-                  <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
-                  {item.label}
-                </div>
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-3">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.label}>
+              <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+                {section.label}
+              </p>
+              <div className="space-y-0.5">
+                {section.items.map((item) => {
+                  const href = `/dashboard/${repoId}${item.path}`;
+                  const isActive = location === href;
+                  return (
+                    <Link key={item.path} href={href}>
+                      <div
+                        className={cn(
+                          "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm cursor-pointer transition-colors",
+                          isActive
+                            ? "bg-primary/15 text-primary font-medium"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground"
+                        )}
+                      >
+                        <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
+                        <span className="text-xs">{item.label}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* Back to Home */}
@@ -88,7 +110,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <Link href="/">
             <div className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors cursor-pointer">
               <ChevronLeft className="w-4 h-4" />
-              New Analysis
+              <span className="text-xs">New Analysis</span>
             </div>
           </Link>
         </div>

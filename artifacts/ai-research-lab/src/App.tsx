@@ -9,6 +9,11 @@ import Agents from "@/pages/agents";
 import Architecture from "@/pages/architecture";
 import Issues from "@/pages/issues";
 import PrSummary from "@/pages/pr-summary";
+import HealthScore from "@/pages/health-score";
+import DependencyRisk from "@/pages/dependency-risk";
+import Timeline from "@/pages/timeline";
+import ArchViz from "@/pages/arch-viz";
+import Onboarding from "@/pages/onboarding";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +33,11 @@ function Router() {
       <Route path="/dashboard/:repoId/architecture" component={Architecture} />
       <Route path="/dashboard/:repoId/issues" component={Issues} />
       <Route path="/dashboard/:repoId/pr-summary" component={PrSummary} />
+      <Route path="/dashboard/:repoId/health-score" component={HealthScore} />
+      <Route path="/dashboard/:repoId/dependency-risk" component={DependencyRisk} />
+      <Route path="/dashboard/:repoId/timeline" component={Timeline} />
+      <Route path="/dashboard/:repoId/arch-viz" component={ArchViz} />
+      <Route path="/dashboard/:repoId/onboarding" component={Onboarding} />
       <Route component={NotFound} />
     </Switch>
   );

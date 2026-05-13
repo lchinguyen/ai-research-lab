@@ -19,6 +19,8 @@ tags:
     description: Issue generation operations
   - name: prs
     description: PR summary operations
+  - name: enhancements
+    description: Enhanced analysis features
 
 paths:
   /healthz:
@@ -184,6 +186,111 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PrSummary"
+
+  /repositories/{repoId}/health-score:
+    get:
+      operationId: getHealthScore
+      tags: [enhancements]
+      summary: Get repository health scores across 6 dimensions
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Health score report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthScore"
+        "404":
+          description: Not found
+
+  /repositories/{repoId}/dependency-risk:
+    get:
+      operationId: getDependencyRisk
+      tags: [enhancements]
+      summary: Analyze dependency risk for a repository
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Dependency risk report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DependencyRisk"
+        "404":
+          description: Not found
+
+  /repositories/{repoId}/timeline:
+    get:
+      operationId: getTimeline
+      tags: [enhancements]
+      summary: Get engineering timeline roadmap for a repository
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Engineering timeline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EngineeringTimeline"
+        "404":
+          description: Not found
+
+  /repositories/{repoId}/arch-viz:
+    get:
+      operationId: getArchViz
+      tags: [enhancements]
+      summary: Get architecture visualization data
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Architecture visualization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchViz"
+        "404":
+          description: Not found
+
+  /repositories/{repoId}/onboarding:
+    get:
+      operationId: getOnboarding
+      tags: [enhancements]
+      summary: Get contributor onboarding guide
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Onboarding guide
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingGuide"
+        "404":
+          description: Not found
 
 components:
   schemas:
@@ -354,3 +461,220 @@ components:
           type: array
           items:
             type: string
+
+    # ── Enhancement schemas ────────────────────────────────────────────────────
+
+    HealthDimension:
+      type: object
+      required: [id, label, score, description, insight]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        score:
+          type: integer
+        description:
+          type: string
+        insight:
+          type: string
+
+    HealthScore:
+      type: object
+      required: [overallScore, grade, dimensions, summary]
+      properties:
+        overallScore:
+          type: integer
+        grade:
+          type: string
+        dimensions:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthDimension"
+        summary:
+          type: string
+
+    DependencyItem:
+      type: object
+      required: [name, category, riskLevel, reason]
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        riskLevel:
+          type: string
+          enum: [low, medium, high, critical]
+        reason:
+          type: string
+
+    DependencyRisk:
+      type: object
+      required: [totalCount, majorFrameworks, estimatedOutdated, overallRisk, bundleComplexity, warnings, recommendations, items]
+      properties:
+        totalCount:
+          type: integer
+        majorFrameworks:
+          type: array
+          items:
+            type: string
+        estimatedOutdated:
+          type: integer
+        overallRisk:
+          type: string
+          enum: [low, medium, high, critical]
+        bundleComplexity:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DependencyItem"
+
+    TimelinePhase:
+      type: object
+      required: [phase, phaseNumber, weeks, milestone, tasks, status]
+      properties:
+        phase:
+          type: string
+        phaseNumber:
+          type: integer
+        weeks:
+          type: integer
+        milestone:
+          type: string
+        tasks:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [complete, in-progress, upcoming]
+
+    EngineeringTimeline:
+      type: object
+      required: [phases, totalWeeks, deploymentReadiness, projectType, summary]
+      properties:
+        phases:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimelinePhase"
+        totalWeeks:
+          type: integer
+        deploymentReadiness:
+          type: string
+        projectType:
+          type: string
+        summary:
+          type: string
+
+    ArchVizNode:
+      type: object
+      required: [id, label, layer, type]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        layer:
+          type: string
+          enum: [frontend, backend, api, services, database, config, testing, shared]
+        type:
+          type: string
+        description:
+          type: string
+        files:
+          type: array
+          items:
+            type: string
+
+    ArchVizConnection:
+      type: object
+      required: [from, to, label]
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        label:
+          type: string
+
+    ArchViz:
+      type: object
+      required: [nodes, connections, projectType, layers]
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArchVizNode"
+        connections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArchVizConnection"
+        projectType:
+          type: string
+        layers:
+          type: array
+          items:
+            type: string
+
+    OnboardingStep:
+      type: object
+      required: [step, title, command, description]
+      properties:
+        step:
+          type: integer
+        title:
+          type: string
+        command:
+          type: string
+        description:
+          type: string
+
+    BeginnerIssue:
+      type: object
+      required: [title, difficulty, area, description]
+      properties:
+        title:
+          type: string
+        difficulty:
+          type: string
+          enum: [beginner, intermediate]
+        area:
+          type: string
+        description:
+          type: string
+
+    OnboardingGuide:
+      type: object
+      required: [setupSteps, firstFilesToRead, beginnerIssues, architectureOverview, localDevSteps, packageManager, estimatedSetupMinutes]
+      properties:
+        setupSteps:
+          type: array
+          items:
+            $ref: "#/components/schemas/OnboardingStep"
+        firstFilesToRead:
+          type: array
+          items:
+            type: string
+        beginnerIssues:
+          type: array
+          items:
+            $ref: "#/components/schemas/BeginnerIssue"
+        architectureOverview:
+          type: string
+        localDevSteps:
+          type: array
+          items:
+            type: string
+        packageManager:
+          type: string
+        estimatedSetupMinutes:
+          type: integer
