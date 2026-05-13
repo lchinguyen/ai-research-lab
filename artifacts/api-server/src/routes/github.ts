@@ -260,6 +260,12 @@ export interface GitHubFetchResult {
   repo: Repository;
   architecture: ArchitectureMap;
   fromGitHub: boolean;
+  /** Raw README text for AI analysis (empty string if unavailable) */
+  readmeText: string;
+  /** Top-level and second-level file paths for AI context */
+  treeItems: GHTreeItem[];
+  /** Key config/manifest files found */
+  keyFiles: string[];
 }
 
 export async function fetchFromGitHub(
@@ -341,9 +347,9 @@ export async function fetchFromGitHub(
       keyFiles: keyFiles.length > 0 ? keyFiles : mockArchFallback.keyFiles,
     };
 
-    return { repo, architecture, fromGitHub: true };
+    return { repo, architecture, fromGitHub: true, readmeText: readme, treeItems, keyFiles };
   } catch (err) {
     // Any GitHub API error → silent fallback to mock
-    return { repo: mockRepoFallback, architecture: mockArchFallback, fromGitHub: false };
+    return { repo: mockRepoFallback, architecture: mockArchFallback, fromGitHub: false, readmeText: "", treeItems: [], keyFiles: [] };
   }
 }
