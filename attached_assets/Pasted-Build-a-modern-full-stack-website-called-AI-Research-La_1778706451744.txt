@@ -1,0 +1,92 @@
+Build a modern full-stack website called “AI Research Lab.”
+
+AI Research Lab is an AI-powered engineering research assistant for GitHub repositories. Users paste a GitHub repository URL, and the app analyzes the repository like an AI software engineering team.
+
+The first version should use realistic mock data only. Do not use real APIs yet.
+
+The website should have a polished SaaS-style UI with responsive desktop/mobile design, modern cards, animations, loading states, badges, sidebar navigation, and clean typography.
+
+Pages and features:
+
+1. Landing Page
+- Large hero section
+- Title: AI Research Lab
+- Subtitle: “An AI engineering agent for understanding and improving GitHub repositories.”
+- Input box for GitHub repository URL
+- Example placeholder:
+  https://github.com/vercel/next.js
+- Button: Analyze Repository
+- Gradient background and modern startup aesthetic
+
+2. Repository Overview Dashboard
+After clicking Analyze Repository, navigate to a dashboard showing:
+- repository name
+- owner
+- detected language/framework
+- stars/forks placeholder
+- project purpose summary
+- architecture summary
+- maintainability score
+- complexity score
+
+3. AI Agent Workspace
+Create six AI engineering agents:
+- Research Lead Agent
+- Architecture Agent
+- Code Review Agent
+- Issue Triage Agent
+- Fix Engineer Agent
+- PR Writer Agent
+
+Each agent should generate role-specific outputs using mock data based on the repo URL.
+
+4. Architecture Map
+Show:
+- folder tree
+- key files
+- dependency explanation
+- component relationships
+- data flow explanation
+
+5. Issue Generator
+Generate GitHub-style issue cards with:
+- title
+- priority
+- type
+- description
+- suggested fix
+- affected files
+
+Add buttons:
+- Copy Issue
+- Export Issues
+- Create GitHub Issues
+
+6. PR Summary Generator
+Generate:
+- pull request title
+- PR summary
+- implementation notes
+- testing checklist
+- risk notes
+
+Add buttons:
+- Copy PR Summary
+- Download Engineering Report
+
+7. UI/UX Requirements
+- React + TypeScript
+- Tailwind CSS
+- responsive layout
+- animated transitions
+- loading indicators
+- sidebar navigation
+- polished startup SaaS aesthetic
+- dark/light friendly
+- deployable website structure
+
+8. Important
+- Build everything first using mock/demo data.
+- The app should work without API keys.
+- Prioritize visual polish and smooth demo experience.
+- Optimize for a 2-minute hackathon demo.

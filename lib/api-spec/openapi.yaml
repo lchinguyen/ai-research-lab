@@ -1,22 +1,31 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AI Research Lab API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: repositories
+    description: Repository analysis operations
+  - name: agents
+    description: AI agent operations
+  - name: architecture
+    description: Architecture map operations
+  - name: issues
+    description: Issue generation operations
+  - name: prs
+    description: PR summary operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +33,158 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /repositories/analyze:
+    post:
+      operationId: analyzeRepository
+      tags: [repositories]
+      summary: Analyze a GitHub repository
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RepositoryInput"
+      responses:
+        "200":
+          description: Repository analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Repository"
+
+  /repositories/{repoId}:
+    get:
+      operationId: getRepository
+      tags: [repositories]
+      summary: Get repository analysis by ID
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Repository details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Repository"
+        "404":
+          description: Not found
+
+  /repositories/{repoId}/agents:
+    get:
+      operationId: getAgents
+      tags: [agents]
+      summary: Get all AI agent outputs for a repository
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of agent outputs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgentOutput"
+
+  /repositories/{repoId}/agents/{agentType}:
+    get:
+      operationId: getAgentOutput
+      tags: [agents]
+      summary: Get a specific AI agent output
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: agentType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - research-lead
+              - architecture
+              - code-review
+              - issue-triage
+              - fix-engineer
+              - pr-writer
+      responses:
+        "200":
+          description: Agent output
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentOutput"
+
+  /repositories/{repoId}/architecture:
+    get:
+      operationId: getArchitecture
+      tags: [architecture]
+      summary: Get architecture map for a repository
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Architecture map
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchitectureMap"
+
+  /repositories/{repoId}/issues:
+    get:
+      operationId: getIssues
+      tags: [issues]
+      summary: Get generated issues for a repository
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of issues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Issue"
+
+  /repositories/{repoId}/pr-summary:
+    get:
+      operationId: getPrSummary
+      tags: [prs]
+      summary: Get PR summary for a repository
+      parameters:
+        - name: repoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: PR summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrSummary"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +195,162 @@ components:
       required:
         - status
 
+    RepositoryInput:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          description: GitHub repository URL
+
+    Repository:
+      type: object
+      required: [id, url, name, owner, language, framework, stars, forks, purpose, architectureSummary, maintainabilityScore, complexityScore, analyzedAt]
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        name:
+          type: string
+        owner:
+          type: string
+        language:
+          type: string
+        framework:
+          type: string
+        stars:
+          type: integer
+        forks:
+          type: integer
+        purpose:
+          type: string
+        architectureSummary:
+          type: string
+        maintainabilityScore:
+          type: integer
+          description: Score 0-100
+        complexityScore:
+          type: integer
+          description: Score 0-100
+        analyzedAt:
+          type: string
+
+    AgentOutput:
+      type: object
+      required: [agentType, agentName, status, summary, findings, recommendations]
+      properties:
+        agentType:
+          type: string
+        agentName:
+          type: string
+        status:
+          type: string
+          enum: [complete, running, pending]
+        summary:
+          type: string
+        findings:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            type: string
+        riskLevel:
+          type: ["string", "null"]
+          enum: [low, medium, high, null]
+
+    FolderNode:
+      type: object
+      required: [name, type]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [file, directory]
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/FolderNode"
+
+    Dependency:
+      type: object
+      required: [name, version, purpose]
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        purpose:
+          type: string
+
+    ArchitectureMap:
+      type: object
+      required: [folderTree, keyFiles, dependencies, componentRelationships, dataFlow]
+      properties:
+        folderTree:
+          type: array
+          items:
+            $ref: "#/components/schemas/FolderNode"
+        keyFiles:
+          type: array
+          items:
+            type: string
+        dependencies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Dependency"
+        componentRelationships:
+          type: array
+          items:
+            type: string
+        dataFlow:
+          type: array
+          items:
+            type: string
+
+    Issue:
+      type: object
+      required: [id, title, priority, type, description, suggestedFix, affectedFiles]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        priority:
+          type: string
+          enum: [critical, high, medium, low]
+        type:
+          type: string
+          enum: [bug, performance, security, refactor, documentation, enhancement]
+        description:
+          type: string
+        suggestedFix:
+          type: string
+        affectedFiles:
+          type: array
+          items:
+            type: string
+
+    PrSummary:
+      type: object
+      required: [title, summary, implementationNotes, testingChecklist, riskNotes]
+      properties:
+        title:
+          type: string
+        summary:
+          type: string
+        implementationNotes:
+          type: array
+          items:
+            type: string
+        testingChecklist:
+          type: array
+          items:
+            type: string
+        riskNotes:
+          type: array
+          items:
+            type: string
