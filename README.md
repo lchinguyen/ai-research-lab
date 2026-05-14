@@ -139,7 +139,7 @@ The frontend was designed with a modern SaaS-style interface including:
 * visual architecture displays
 
 
-## Final Web-App
+## Final Web-App: https://ai-research-hub--lchinguyenn.replit.app/
 
 * built a polished engineering-focused AI workflow platform
 * integrated real GitHub repository analysis
@@ -155,6 +155,7 @@ The frontend was designed with a modern SaaS-style interface including:
 ### Live Demo
 
 [https://ai-research-hub--lchinguyenn.replit.app/](https://ai-research-hub--lchinguyenn.replit.app/)
+
 Video: https://youtu.be/iHjGllJhC58?si=kdcvNHI_WMlC0a6a
 
 ## Built With
