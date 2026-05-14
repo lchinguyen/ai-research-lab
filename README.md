@@ -1,20 +1,8 @@
 # AI Research Lab — Devpost Submission + GitHub README
 
-# Devpost Submission
-
-## Project Title
-
-AI Research Lab
-
----
-
-## Tagline
-
 An AI-powered engineering research assistant that analyzes GitHub repositories, explains architecture, generates engineering insights, and creates developer workflows.
 
 ---
-
-## Elevator Pitch
 
 AI Research Lab is a web application that transforms GitHub repositories into explainable engineering reports. Users paste a repository URL, and the platform analyzes the project like an AI software engineering team. The app generates architecture explanations, repository health analysis, engineering roadmaps, GitHub issue suggestions, PR summaries, and contributor onboarding guidance.
 
