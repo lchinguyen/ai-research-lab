@@ -104,17 +104,6 @@ Supports:
 * PR summary generation
 * repository workflow automation
 
----
-
-## Built With
-
-* React
-* TypeScript
-* Tailwind CSS
-* GitHub REST API
-* Vite
-* Replit
-* GitHub
 
 The app was initially developed using mock engineering analysis workflows before integrating real GitHub repository data.
 
@@ -135,7 +124,7 @@ The frontend was designed with a modern SaaS-style interface including:
 * visual architecture displays
 
 
-## FInal Web-App
+## Final Web-App
 
 * built a polished engineering-focused AI workflow platform
 * integrated real GitHub repository analysis
@@ -143,6 +132,14 @@ The frontend was designed with a modern SaaS-style interface including:
 * designed a deployable SaaS-style application
 * implemented engineering reporting and onboarding workflows
 * successfully deployed a functional public demo
+
+---
+
+## Demo Links
+
+### Live Demo
+
+[https://ai-research-hub--lchinguyenn.replit.app/](https://ai-research-hub--lchinguyenn.replit.app/)
 
 
 ## Built With
@@ -154,15 +151,6 @@ The frontend was designed with a modern SaaS-style interface including:
 * GitHub REST API
 * Replit
 * GitHub
-
----
-
-## Demo Links
-
-### Live Demo
-
-[https://ai-research-hub--lchinguyenn.replit.app/](https://ai-research-hub--lchinguyenn.replit.app/)
-
 
 
 ## Overview
