@@ -152,9 +152,7 @@ The frontend was designed with a modern SaaS-style interface including:
 
 ## Demo Links
 
-### Live Demo
-
-[https://ai-research-hub--lchinguyenn.replit.app/](https://ai-research-hub--lchinguyenn.replit.app/)
+### Live Demo: [https://ai-research-hub--lchinguyenn.replit.app/](https://ai-research-hub--lchinguyenn.replit.app/)
 
 Video: https://youtu.be/iHjGllJhC58?si=kdcvNHI_WMlC0a6a
 
