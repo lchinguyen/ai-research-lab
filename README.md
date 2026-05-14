@@ -146,7 +146,7 @@ The frontend was designed with a modern SaaS-style interface including:
 * visual architecture displays
 
 
-## Final Web-App: https://ai-research-hub--lchinguyenn.replit.app/
+## Final Web-App: 
 
 * built a polished engineering-focused AI workflow platform
 * integrated real GitHub repository analysis
