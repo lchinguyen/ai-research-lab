@@ -159,7 +159,8 @@ The frontend was designed with a modern SaaS-style interface including:
 
 ### Live Demo: 
 
-AI Research Lab web-app permanent link (deploy through Vercel): https://ai-research-lab-ai-research-4yjcnu6se-chinguyen1010s-projects.vercel.app/
+AI Research Lab web-app permanent link (deploy through Vercel): 
+https://ai-research-lab-ai-research-4yjcnu6se-chinguyen1010s-projects.vercel.app/
 
 Video: https://youtu.be/iHjGllJhC58?si=kdcvNHI_WMlC0a6a
 
