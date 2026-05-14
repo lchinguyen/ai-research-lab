@@ -25,13 +25,21 @@ The platform transforms open-source repositories into structured engineering rep
 Core Workflow:
 
 Paste GitHub repository URL
+
 ↓
+
 Analyze repository structure and metadata
+
 ↓
+
 Generate engineering insights
+
 ↓
+
 Create architecture explanations
+
 ↓
+
 Generate issue suggestions and PR summaries
 
 The application then:
