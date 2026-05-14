@@ -4,6 +4,8 @@
 
 Try it here: https://ai-research-lab-ai-research-4yjcnu6se-chinguyen1010s-projects.vercel.app/
 
+https://ai-research-hub--lchinguyenn.replit.app/
+
 ---
 
 AI Research Lab is a web application that transforms GitHub repositories into explainable engineering reports. Users paste a repository URL, and the platform analyzes the project like an AI software engineering team. The app generates architecture explanations, repository health analysis, engineering roadmaps, GitHub issue suggestions, PR summaries, and contributor onboarding guidance.
@@ -157,7 +159,7 @@ The frontend was designed with a modern SaaS-style interface including:
 
 ## Demo Links
 
-### Live Demo: 
+### Live Demo: https://ai-research-hub--lchinguyenn.replit.app/
 
 AI Research Lab web-app permanent link (deploy through Vercel): 
 https://ai-research-lab-ai-research-4yjcnu6se-chinguyen1010s-projects.vercel.app/
