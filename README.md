@@ -1,6 +1,4 @@
-# AI Research Lab — Devpost Submission + GitHub README
-
-An AI-powered engineering research assistant that analyzes GitHub repositories, explains architecture, generates engineering insights, and creates developer workflows.
+# AI Research Lab — An AI-powered engineering research assistant that analyzes GitHub repositories, explains architecture, generates engineering insights, and creates developer workflows.
 
 ---
 
