@@ -172,7 +172,6 @@ Video: https://youtu.be/iHjGllJhC58?si=kdcvNHI_WMlC0a6a
 * Vite
 * GitHub REST API
 * Replit
-* GitHub
 
 
 ## Example Repository Inputs
