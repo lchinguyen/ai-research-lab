@@ -2,9 +2,7 @@
 
 ---
 
-Try it here: https://ai-research-lab-ai-research-4yjcnu6se-chinguyen1010s-projects.vercel.app/
-
-https://ai-research-hub--lchinguyenn.replit.app/
+Try it here: https://ai-research-hub--lchinguyenn.replit.app/
 
 ---
 
