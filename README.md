@@ -1,5 +1,6 @@
 # AI Research Lab — an AI-powered engineering research assistant that analyzes GitHub repositories, explains architecture, generates engineering insights, and creates developer workflows.
 
+Try it here!: https://ai-research-lab-ai-research-4yjcnu6se-chinguyen1010s-projects.vercel.app/
 ---
 
 AI Research Lab is a web application that transforms GitHub repositories into explainable engineering reports. Users paste a repository URL, and the platform analyzes the project like an AI software engineering team. The app generates architecture explanations, repository health analysis, engineering roadmaps, GitHub issue suggestions, PR summaries, and contributor onboarding guidance.
@@ -8,9 +9,7 @@ AI Research Lab is a web application that transforms GitHub repositories into ex
 
 ## Inspiration
 
-Developers often spend hours trying to understand unfamiliar repositories before contributing to open-source projects or joining engineering teams. Large repositories can feel overwhelming, especially for students, junior developers, or contributors onboarding into new codebases.
-
-AI Research Lab was built to reduce the time required to understand software architecture and engineering workflows. The project combines GitHub repository analysis with AI-inspired engineering agents to create a more accessible developer experience.
+Developers often spend hours trying to understand unfamiliar and learge repositories before contributing to open-source projects, especially for students, junior developers, or contributors onboarding into new codebases. The project combines GitHub repository analysis with AI-inspired engineering agents to create a more accessible developer experience.
 
 ---
 
