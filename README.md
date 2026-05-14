@@ -159,7 +159,7 @@ The frontend was designed with a modern SaaS-style interface including:
 
 ## Demo Links
 
-### Live Demo: https://resplendent-cajeta-706ae0.netlify.app/ (Netlify website is the permanent hosted version)
+### Live Demo: 
 
 Replit web app: [https://ai-research-hub--lchinguyenn.replit.app/](https://ai-research-hub--lchinguyenn.replit.app/)
 
