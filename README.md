@@ -18,11 +18,7 @@ Developers often spend hours trying to understand unfamiliar and learge reposito
 
 ## What It Does
 
-Users paste a GitHub repository URL, and the application analyzes the repository like a virtual software engineering team such as:
-
-[https://github.com/vercel/next.js](https://github.com/vercel/next.js)
-
-The platform transforms open-source repositories into structured engineering reports and developer workflows.
+Users paste a GitHub repository URL: [https://github.com/vercel/next.js](https://github.com/vercel/next.js)
 
 Core Workflow:
 
@@ -44,7 +40,7 @@ Create architecture explanations
 
 Generate issue suggestions and PR summaries
 
-The application then:
+The application then: analyzes the repository like a virtual software engineering team 
 
 * analyzes repository metadata
 * explains architecture and project structure
