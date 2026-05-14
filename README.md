@@ -16,9 +16,24 @@ AI Research Lab was built to reduce the time required to understand software arc
 
 ## What It Does
 
-Users paste a GitHub repository URL such as:
+Users paste a GitHub repository URL, and the application analyzes the repository like a virtual software engineering team.
+such as:
 
 [https://github.com/vercel/next.js](https://github.com/vercel/next.js)
+
+The platform transforms open-source repositories into structured engineering reports and developer workflows.
+
+Core Workflow:
+
+Paste GitHub repository URL
+↓
+Analyze repository structure and metadata
+↓
+Generate engineering insights
+↓
+Create architecture explanations
+↓
+Generate issue suggestions and PR summaries
 
 The application then:
 
